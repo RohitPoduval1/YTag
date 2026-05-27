@@ -1,3 +1,4 @@
+"""Create a YTag compatible CSV from a raw YouTube playlist URL"""
 import csv
 import json
 import re
@@ -23,7 +24,6 @@ if __name__ == "__main__":
 
         info_dict = ydl.extract_info(cleaned_playlist_url, download=False)
 
-        # Get the list of videos (default to an empty list if not found)
         entries = info_dict.get('entries', [])
 
         csv_filename = sys.argv[2]
@@ -37,9 +37,9 @@ if __name__ == "__main__":
                 # yt-dlp flat extraction usually returns just the url, title, and id
                 url = entry.get('url')
                 title = entry.get('title')
-                if title == "[Private video]":
+                if re.match(r"\[\w+ video\]", title):
                     continue
-                
+
                 writer.writerow([title.strip(), url, ""])
 
     print(f"Success! {len(entries)} videos saved to {csv_filename}.")
